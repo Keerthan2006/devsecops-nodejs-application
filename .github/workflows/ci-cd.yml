@@ -46,3 +46,18 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  lint:
+    name: lint-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v7
+      - name: setup node
+        uses: actions/setup-node@V7
+        with:
+          node-version: 24
+          cache: npm
+      - name: install dependencies
+        run: npm ci
+      - name: lint test
+        run: npm run lint
