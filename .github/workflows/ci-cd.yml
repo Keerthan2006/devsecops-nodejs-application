@@ -20,3 +20,19 @@ jobs:
         run: sudo apt update && sudo apt install gitleaks
       - name: scan for secrets
         run: gitleaks detect --source . --verbose
+  sca:
+    name: dependency check
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v7
+      - name: setup node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: install dependencies
+        run: npm ci
+      - name: scan dependencies
+        run: npm audit --audit-level=high 
+
