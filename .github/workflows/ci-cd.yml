@@ -121,8 +121,8 @@ jobs:
           sed -i "s/tag:.*/tag: \"${{ github.sha }}\"/" nodeapp/values.yaml
       - name: git commit and push
         run: |
-          git config --global user.email ${{ secrets.email }}
-          git config --global user.name ${{ vars.username }}
+          git config --global user.email "${{ secrets.email }}"
+          git config --global user.name "${{ vars.username }}"
           git add nodeapp/values.yaml
           git diff --cached --quiet || git commit -m "updating helm value"
           git push
