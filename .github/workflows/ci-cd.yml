@@ -3,9 +3,16 @@ name: cicd-pipeline
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+    - "kubernetes/**"
+    - "nodeapp/**"
   pull_request:
     branches: [ main ]
+    paths-ignore:
+    - "kubernetes/**"
+    - "nodeapp/**"
   workflow_dispatch:
+  
 
 jobs:
   gitleaks:
@@ -100,3 +107,23 @@ jobs:
           severity: 'CRITICAL,HIGH'
       - name: docker push
         run: docker push ${{ vars.DOCKERHUB_USERNAME }}/nodeapp:${{ github.sha }}
+  update-helm:
+    needs: docker
+    name: updating image tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v7
+      - name: helm value
+        run: |
+          sed -i "s/tag:.*/tag: \"${{ github.sha }}\"/" nodeapp/values.yaml
+      - name: git commit and push
+        run: |
+          git config --global user.email ${{ secrets.email }}
+          git config --global user.name ${{ vars.username }}
+          git add nodeapp/values.yaml
+          git diff --cached --quiet || git commit -m "updating helm value"
+          git push
+      
