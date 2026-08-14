@@ -16,7 +16,7 @@ spec:
         app: node
     spec:
       containers:
-      - name: nodeContainer
+      - name: node-container
         image: "{{ .Values.image.user }}/nodeapp:{{ .Values.image.tag }}"
         ports:
         - containerPort: 80
